@@ -1,19 +1,23 @@
 {
-  "name": "plus-plus",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "test": "vitest",
-    "cf-typegen": "wrangler types"
-  },
-  "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.4.5",
-    "@cloudflare/workers-types": "^4.20240614.0",
-    "typescript": "^5.4.5",
-    "vitest": "1.5.0",
-    "wrangler": "^3.60.3"
-  }
+	"name": "plus-plus",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"cf-typegen": "wrangler types",
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest"
+	},
+	"dependencies": {
+		"slack-cloudflare-workers": "^0.13.0",
+		"sst": "ion"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.4.5",
+		"@cloudflare/workers-types": "4.20240614.0",
+		"typescript": "^5.4.5",
+		"vitest": "1.5.0",
+		"wrangler": "^3.60.3"
+	}
 }
