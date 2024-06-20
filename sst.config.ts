@@ -21,11 +21,12 @@ export default $config({
 			handler: './src/index.ts',
 			link: [installationsKv, oauthStates, db],
 			url: true,
+			domain: $app.stage === 'production' ? 'app.plusplus.bot' : 'dev.plusplus.bot',
 			environment: {
 				SLACK_SIGNING_SECRET: signingSecret.value,
 				SLACK_CLIENT_ID: clientId.value,
 				SLACK_CLIENT_SECRET: clientSecret.value,
-				SLACK_BOT_SCOPES: 'chat:write,chat:write.public,app_mentions:read,users:read',
+				SLACK_BOT_SCOPES: 'chat:write,chat:write.public,app_mentions:read,users:read,commands,channels:history',
 			},
 		});
 

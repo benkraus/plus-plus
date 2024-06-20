@@ -7,6 +7,10 @@ declare module "sst" {
       type: "sst.cloudflare.Worker"
       url: string
     }
+    SlackClientId: {
+      type: "sst.sst.Secret"
+      value: string
+    }
     SlackClientSecret: {
       type: "sst.sst.Secret"
       value: string
