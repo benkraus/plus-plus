@@ -34,7 +34,12 @@ export const minusMinusMessages = [
 	'Condolences.',
 ];
 
-export const selfPlusMessages = ['Hahahahahahaha no.', 'Nope.', 'No. Just no.', 'Not cool!'];
+export const selfPlusMessages = [
+	'Hahahahahahaha no. No self promotion.',
+	'Nope. No self promotion.',
+	'No. Just no. No self promotion.',
+	'Not cool! No self promotion.',
+];
 
 export const getRandomMessage = (type: KarmaMessageType) => {
 	const messages = {

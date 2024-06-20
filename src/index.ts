@@ -17,18 +17,23 @@ export default {
 			stateStore: new KVStateStore(Resource.PlusPlusOAuthStates),
 		})
 			.event('app_mention', async ({ context }) => {})
-			.message(/<?@([^>]+)>?\s*\+\+/g, async ({ context, payload }) => {
+			.message(/<?@([^>]+)>?\s*(\+\+|--)/g, async ({ context, payload }) => {
 				const teamId = context.teamId;
 				const sender = context.userId;
-				const regex = /<?@([^>]+)>?\s*\+\+/g;
-				const matches = [];
+				const regex = /<?@([^>]+)>?\s*(\+\+|--)/g;
+				const matches: Array<{ target: string; action: '++' | '--' }> = [];
 				let match;
+				let matchesByUser: Record<string, number> = {};
 
 				while ((match = regex.exec(payload.text)) !== null) {
-					matches.push(match[1]);
+					matches.push({
+						target: match[1],
+						action: match[2] === '++' ? '++' : '--',
+					});
 				}
 
-				if (matches.includes(sender)) {
+				// Forbid self promotion, but allow self degradation 😅
+				if (matches.some((match) => match.target === sender && match.action === '++')) {
 					await context.client.chat.postMessage({
 						channel: context.channelId,
 						text: getRandomMessage(KarmaMessageType.SelfPlus),
@@ -36,13 +41,18 @@ export default {
 					return;
 				}
 
-				for (const receiver of matches) {
+				for (const operation of matches) {
+					const amount = operation.action === '++' ? 1 : -1;
 					await db.insert(karma).values({
 						teamId,
 						sender,
-						receiver,
+						receiver: operation.target,
+						amount,
 					});
-
+					matchesByUser[operation.target] = (matchesByUser[operation.target] || 0) + amount;
+				}
+				// Aggregate the karma for each receiver so we only post the final score once for each user
+				for (const [receiver, count] of Object.entries(matchesByUser)) {
 					const receiverKarma = await db
 						.select({
 							count: sql<number>`sum(${karma.amount})`.as('count'),
@@ -52,39 +62,9 @@ export default {
 
 					await context.client.chat.postMessage({
 						channel: context.channelId,
-						text: `${getRandomMessage(KarmaMessageType.PlusPlus)} [<@${receiver}> is now at ${receiverKarma[0].count}]`,
-					});
-				}
-			})
-			.message(/<?@([^>]+)>?\s*\-\-/g, async ({ context, payload }) => {
-				const teamId = context.teamId;
-				const sender = context.userId;
-				const regex = /<?@([^>]+)>?\s*\-\-/g;
-				const matches = [];
-				let match;
-
-				while ((match = regex.exec(payload.text)) !== null) {
-					matches.push(match[1]);
-				}
-
-				for (const receiver of matches) {
-					await db.insert(karma).values({
-						teamId,
-						sender,
-						receiver,
-						amount: -1,
-					});
-
-					const receiverKarma = await db
-						.select({
-							count: sql<number>`sum(${karma.amount})`.as('count'),
-						})
-						.from(karma)
-						.where(and(eq(karma.teamId, teamId), eq(karma.receiver, receiver)));
-
-					await context.client.chat.postMessage({
-						channel: context.channelId,
-						text: `${getRandomMessage(KarmaMessageType.MinusMinus)} [<@${receiver}> is now at ${receiverKarma[0].count}]`,
+						text: `${getRandomMessage(count > 0 ? KarmaMessageType.PlusPlus : KarmaMessageType.MinusMinus)} [<@${receiver}> is now at ${
+							receiverKarma[0].count
+						}]`,
 					});
 				}
 			})
