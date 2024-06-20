@@ -1,6 +1,6 @@
 export enum KarmaMessageType {
 	PlusPlus = 'PlusPlus',
-	PlusMinus = 'PlusMinus',
+	MinusMinus = 'MinusMinus',
 	SelfPlus = 'SelfPlus',
 }
 
@@ -23,7 +23,7 @@ export const plusPlusMessages = [
 	'Delicious.',
 ];
 
-export const plusMinusMessages = [
+export const minusMinusMessages = [
 	'Oh RLY?',
 	'Oh, really?',
 	'Oh :slightly_frowning_face:.',
@@ -39,7 +39,7 @@ export const selfPlusMessages = ['Hahahahahahaha no.', 'Nope.', 'No. Just no.', 
 export const getRandomMessage = (type: KarmaMessageType) => {
 	const messages = {
 		[KarmaMessageType.PlusPlus]: plusPlusMessages,
-		[KarmaMessageType.PlusMinus]: plusMinusMessages,
+		[KarmaMessageType.MinusMinus]: minusMinusMessages,
 		[KarmaMessageType.SelfPlus]: selfPlusMessages,
 	};
 

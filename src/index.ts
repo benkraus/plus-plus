@@ -84,7 +84,7 @@ export default {
 
 					await context.client.chat.postMessage({
 						channel: context.channelId,
-						text: `${getRandomMessage(KarmaMessageType.PlusMinus)} [<@${receiver}> is now at ${receiverKarma[0].count}]`,
+						text: `${getRandomMessage(KarmaMessageType.MinusMinus)} [<@${receiver}> is now at ${receiverKarma[0].count}]`,
 					});
 				}
 			})
