@@ -36,6 +36,7 @@ export default {
 				if (matches.some((match) => match.target === sender && match.action === '++')) {
 					await context.client.chat.postMessage({
 						channel: context.channelId,
+						thread_ts: payload.thread_ts,
 						text: getRandomMessage(KarmaMessageType.SelfPlus),
 					});
 					return;
@@ -62,6 +63,7 @@ export default {
 
 					await context.client.chat.postMessage({
 						channel: context.channelId,
+						thread_ts: payload.thread_ts,
 						text: `${getRandomMessage(count > 0 ? KarmaMessageType.PlusPlus : KarmaMessageType.MinusMinus)} [<@${receiver}> is now at ${
 							receiverKarma[0].count
 						}]`,
